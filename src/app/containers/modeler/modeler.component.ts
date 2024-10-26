@@ -4,6 +4,7 @@ import { dia, linkTools, shapes } from '@joint/core';
 import { ElementsPaletteComponent } from '../../components/elements-palette/elements-palette.component';
 import { ModelerCanvasComponent } from '../../components/modeler-canvas/modeler-canvas.component';
 import { ModelerPropertiesComponent } from '../../components/modeler-properties/modeler-properties.component';
+import { ElementSelectionFacadeService } from '../../store/facade/element-selection.facade.service';
 
 @Component({
   selector: 'app-modeler',
@@ -16,6 +17,10 @@ export class ModelerComponent implements AfterViewInit {
   graph: dia.Graph;
   paper: dia.Paper;
   hideElementTools: Boolean = true;
+
+  constructor(private facadeService: ElementSelectionFacadeService) {
+
+  }
 
   ngAfterViewInit(): void {
     this.graph = new dia.Graph({}, { cellNamespace: shapes });
@@ -38,20 +43,20 @@ export class ModelerComponent implements AfterViewInit {
 
   addEventListeners() {
     this.paper.on('element:pointerclick', (elementView) => {
-      if(this.hideElementTools) {
-        this.paper.hideTools();
-        elementView.showTools();
-      }
-      if(!this.hideElementTools) {
-        elementView.hideTools();
-      }
-      this.hideElementTools = !this.hideElementTools;
+      this.paper.hideTools();
+      elementView.showTools();
+      // const element = {
+      //   elementId: elementView.model.id.toString(),
+      //   elementType: elementView.model.attributes['type']
+      // }
+      this.facadeService.onSelected(elementView.model.id.toString());
     });
 
     //Hide all tools on blank canvas click
     this.paper.on('blank:pointerdown', (evt, x, y) => {
       this.paper.hideTools();
       this.hideElementTools = true;
+      this.facadeService.onDeselection();
     });
 
     this.paper.on('link:connect', (evt, x, y) => {
@@ -74,6 +79,11 @@ export class ModelerComponent implements AfterViewInit {
 
     this.paper.on('link:mouseleave', function(linkView) {
       linkView.removeTools();
+    });
+
+    this.graph.on('remove', (element, collection, options) => {
+      this.facadeService.onDeselection();
+      this.facadeService.onRemove(element.id);
     });
   }
 }

@@ -1,6 +1,6 @@
 <div>
-    <input type="text" pInputText placeholder="Search items..." [(ngModel)]="searchTerm" (input)="onSearchChange()" />
-    <p-accordion>
+    <input type="text" pInputText placeholder="Search elements..." [(ngModel)]="searchTerm" (input)="onSearchChange()" [style]="{'width':'100%'}" />
+    <p-accordion [style]="{'margin-top': '10px'}">
         <p-accordionTab *ngFor="let tab of filteredItems" [header]="tab.type" cdkDropList (cdkDropListDropped)="onDrop($event)" [cdkDropListData]="tab.elements">
             <ng-container *ngFor="let item of tab.elements">
                 <div class="af-p-card" cdkDrag>

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { dia, shapes, util } from '@joint/core';
+import { dia, util } from '@joint/core';
 
 @Injectable({
   providedIn: 'root'
@@ -8,18 +8,19 @@ import { dia, shapes, util } from '@joint/core';
 export class ElementService {
     constructor() { }
 
-    public getElement(elementName, position) {
+    public getElement(element, position) {
         let newElement;
-        if (elementName != 'rect') {
-            newElement = new NodeElement({
+        if (element.name != 'rect') {
+            newElement = new Node({
                 attrs: ({
                     label: {
-                        text: elementName,
+                        text: element.name,
                     }
                 })
             });
             newElement.position(position.x, position.y);
             newElement.resize(150, 50);
+            newElement.prop({'type': element.type});
         }
         return newElement;
     }
@@ -53,11 +54,11 @@ class ForeignObjectElement extends dia.Element {
     }
 }
 
-export class NodeElement extends ForeignObjectElement {
+export class Node extends ForeignObjectElement {
     override defaults() {
         return {
             ...super.defaults(),
-            type: 'Card',
+            type: 'af.Node',
             size: {
                 width: 200,
                 height: 50

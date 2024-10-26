@@ -5,7 +5,7 @@ import { ModelerComponent } from './containers/modeler/modeler.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ModelerComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

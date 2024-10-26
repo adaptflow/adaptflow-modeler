@@ -12,21 +12,25 @@ export class ElementListService {
       {
         type: "LLM",
         elements: [{
-          name: "Provider"
+          name: "LLM Provider",
+          type: "af.llm.provider"
         }]
       },
       {
         type: "Embeddings",
         elements: [{
-          name: "Generate Embeddings"
+          name: "Generate Embeddings",
+          type: "af.embeddings.generate"
         },{
-          name: "Store Embeddings"
+          name: "Store Embeddings",
+          type: "af.embeddings.store"
         }]
       },
       {
-        type: "Document Retrieval",
+        type: "Store",
         elements: [{
-          name: "Vector Store"
+          name: "Elastic Search",
+          type: "af.vector-store.elasticSearch"
         }]
       }
     ];

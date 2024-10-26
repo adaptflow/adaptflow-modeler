@@ -1,6 +1,6 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { dia, elementTools } from '@joint/core';
 import { AccordionModule } from 'primeng/accordion';
@@ -8,6 +8,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ElementType } from '../../interface/palette.interface';
 import { ElementListService } from '../../services/elements/element-list.service';
 import { ElementService } from '../../services/elements/element.service';
+import { ElementSelectionFacadeService } from '../../store/facade/element-selection.facade.service';
 
 @Component({
   selector: 'elements-palette',
@@ -28,25 +29,32 @@ export class ElementsPaletteComponent implements OnInit {
 
   constructor(
     private elementList: ElementListService,
-    private elementService: ElementService
+    private elementService: ElementService,
+    private facadeService: ElementSelectionFacadeService,
+    private cdr: ChangeDetectorRef
   ) {
 
   }
   ngOnInit() {
-    this.elementTypes = this.elementList.get()
+    this.elementTypes = this.elementList.get();
     this.updateFilteredItems();
   }
 
   onDrop(event): void {
+    this.cdr.detectChanges();
     const dropPosition = this.getMousePositionOnCanvas(event.event);
     // Add shape to canvas based on the dropped element
-    this.addElementToCanvas(event.container.data[event.currentIndex].name, dropPosition);
+    let droppedElement = event.container.data[event.currentIndex];
+    let elementId = this.addElementToCanvas(droppedElement, dropPosition);
+    this.facadeService.onDeselection();
+    this.facadeService.onDropped(elementId, droppedElement.type);
     this.paper.hideTools();
+    this.cdr.detectChanges();
   }
 
-  private addElementToCanvas(elementName: string, position: { x: number, y: number }) {
+  private addElementToCanvas(element, position: { x: number, y: number }) {
     const target = this.paper.el.getBoundingClientRect();
-    let newElement = this.elementService.getElement(elementName, position);
+    let newElement = this.elementService.getElement(element, position);
     // Add the element to the graph
     this.graph.addCell(newElement);
 
@@ -70,6 +78,7 @@ export class ElementsPaletteComponent implements OnInit {
         ]
     });
     newElement.findView(this.paper).addTools(toolsView);
+    return newElement.id;
   }
 
   // Get mouse position relative to canvas
