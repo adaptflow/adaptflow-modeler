@@ -2,13 +2,14 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { dia, elementTools } from '@joint/core';
+import { dia } from '@joint/core';
 import { AccordionModule } from 'primeng/accordion';
 import { InputTextModule } from 'primeng/inputtext';
 import { ElementType } from '../../interface/palette.interface';
 import { ElementListService } from '../../services/elements/element-list.service';
 import { ElementService } from '../../services/elements/element.service';
 import { ElementSelectionFacadeService } from '../../store/facade/element-selection.facade.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'elements-palette',
@@ -31,7 +32,8 @@ export class ElementsPaletteComponent implements OnInit {
     private elementList: ElementListService,
     private elementService: ElementService,
     private facadeService: ElementSelectionFacadeService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private sanitizer: DomSanitizer
   ) {
 
   }
@@ -57,27 +59,7 @@ export class ElementsPaletteComponent implements OnInit {
     let newElement = this.elementService.getElement(element, position);
     // Add the element to the graph
     this.graph.addCell(newElement);
-
-    //on hover add boundry and rmove button
-    let boundaryTool = new elementTools.Boundary({
-      rotate: true,
-      useModelGeometry: true,
-    });
-    let removeElementButton = new elementTools.Remove();
-    let connectbutton = new elementTools.Connect({
-      rotate: true,
-      useModelGeometry: true,
-      x: '100%',
-      y: '50%'
-    });
-    let toolsView = new dia.ToolsView({
-        tools: [
-            removeElementButton,
-            connectbutton,
-            boundaryTool
-        ]
-    });
-    newElement.findView(this.paper).addTools(toolsView);
+    this.elementService.addTools(this.paper, newElement);
     return newElement.id;
   }
 
@@ -105,6 +87,18 @@ export class ElementsPaletteComponent implements OnInit {
 
   onSearchChange() {
     this.updateFilteredItems();
+  }
+
+  getSvg(element) {
+    if(element.shape=='af.polygon') {
+      return this.sanitizer.bypassSecurityTrustHtml(`
+      <svg width="80" height="80">
+        <polygon joint-selector="body" id="v-4" points="0,35 35,0 70,35 35,70" stroke-width="2" stroke="#333333" fill="#FFFFFF"></polygon>
+        <text fill="#000" font-size="10" font-family="Verdana" x="10" y="38">${element.name}</text>
+      </svg>
+      `);
+    }
+    return null;  
   }
 }
 

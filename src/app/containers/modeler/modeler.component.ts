@@ -5,6 +5,8 @@ import { ElementsPaletteComponent } from '../../components/elements-palette/elem
 import { ModelerCanvasComponent } from '../../components/modeler-canvas/modeler-canvas.component';
 import { ModelerPropertiesComponent } from '../../components/modeler-properties/modeler-properties.component';
 import { ElementSelectionFacadeService } from '../../store/facade/element-selection.facade.service';
+import * as _ from 'lodash';
+import { ElementService } from '../../services/elements/element.service';
 
 @Component({
   selector: 'app-modeler',
@@ -17,8 +19,12 @@ export class ModelerComponent implements AfterViewInit {
   graph: dia.Graph;
   paper: dia.Paper;
   hideElementTools: Boolean = true;
+  startElement;
+  endElement;
 
-  constructor(private facadeService: ElementSelectionFacadeService) {
+  constructor(
+    private facadeService: ElementSelectionFacadeService,
+    private elementService: ElementService) {
 
   }
 
@@ -39,16 +45,43 @@ export class ModelerComponent implements AfterViewInit {
       }
     });
     this.addEventListeners();
+    this.addStartAndEndElement();
+    window.addEventListener('resize', () => this.updateElementPositions());
+    this.paper.hideTools();
   }
+
+  addStartAndEndElement() {
+    this.startElement = new shapes.standard.Circle();
+    this.startElement.resize(50, 50);
+    this.startElement.attr('root/title', 'shapes.standard.Circle');
+    this.startElement.attr('label/text', 'Start');
+    this.graph.addCell(this.startElement);
+    this.elementService.addTools(this.paper, this.startElement);
+
+    this.endElement = new shapes.standard.Circle();
+    this.endElement.resize(50, 50);
+    this.endElement.attr('label/text', 'End');
+    this.graph.addCell(this.endElement);
+    this.elementService.addTools(this.paper, this.endElement);
+    this.updateElementPositions();
+
+  }
+
+  updateElementPositions() {
+    // Get the container dimensions
+    const container = document.getElementById('canvasContainer');
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+
+    this.startElement.position(20, containerHeight / 2 - 25);
+    this.endElement.position(containerWidth - 70, containerHeight / 2 - 25);
+  }
+
 
   addEventListeners() {
     this.paper.on('element:pointerclick', (elementView) => {
       this.paper.hideTools();
       elementView.showTools();
-      // const element = {
-      //   elementId: elementView.model.id.toString(),
-      //   elementType: elementView.model.attributes['type']
-      // }
       this.facadeService.onSelected(elementView.model.id.toString());
     });
 

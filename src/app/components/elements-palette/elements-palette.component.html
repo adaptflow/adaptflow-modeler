@@ -2,13 +2,20 @@
     <input type="text" pInputText placeholder="Search elements..." [(ngModel)]="searchTerm" (input)="onSearchChange()" [style]="{'width':'100%'}" />
     <p-accordion [style]="{'margin-top': '10px'}">
         <p-accordionTab *ngFor="let tab of filteredItems" [header]="tab.type" cdkDropList (cdkDropListDropped)="onDrop($event)" [cdkDropListData]="tab.elements">
-            <ng-container *ngFor="let item of tab.elements">
-                <div class="af-p-card" cdkDrag>
-                    <div class="af-p-card-content">
-                        {{item.name}}
+            <div *ngIf="tab.type=='General'">
+                <ng-container *ngFor="let item of tab.elements; let i = index">
+                    <div [innerHTML]="getSvg(item)" cdkDrag></div>
+                </ng-container>
+            </div>
+            <div *ngIf="tab.type!='General'">
+                <ng-container *ngFor="let item of tab.elements">
+                    <div class="af-p-card" cdkDrag>
+                        <div class="af-p-card-content">
+                            {{item.name}}
+                        </div>
                     </div>
-                </div>
-            </ng-container>
+                </ng-container>
+            </div>
         </p-accordionTab>
     </p-accordion>
 </div>

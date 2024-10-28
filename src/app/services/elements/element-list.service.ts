@@ -10,6 +10,15 @@ export class ElementListService {
   public get() {
     let elementList = [
       {
+        type: "General",
+        elements: [
+        {
+          name: "Condition",
+          shape: "af.polygon",
+          type: "af.standard"
+        }]
+      },
+      {
         type: "LLM",
         elements: [{
           name: "LLM Provider",

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { dia, util } from '@joint/core';
+import { dia, elementTools, shapes, util } from '@joint/core';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +10,16 @@ export class ElementService {
 
     public getElement(element, position) {
         let newElement;
-        if (element.name != 'rect') {
+        if(element.type=='af.standard') {
+            if(element.shape=='af.polygon') {
+                newElement = new shapes.standard.Polygon();
+                newElement.resize(80, 80);
+                newElement.attr('root/title', 'shapes.standard.Polygon');
+                newElement.attr('label/text', element.name);
+                newElement.attr('body/refPoints', '0,10 10,0 20,10 10,20');   
+            }
+        }
+        else {
             newElement = new Node({
                 attrs: ({
                     label: {
@@ -18,11 +27,34 @@ export class ElementService {
                     }
                 })
             });
-            newElement.position(position.x, position.y);
             newElement.resize(150, 50);
             newElement.prop({'type': element.type});
         }
+        newElement.position(position.x, position.y);
         return newElement;
+    }
+
+    public addTools(paper, element) {
+        //on hover add boundry and rmove button
+        let boundaryTool = new elementTools.Boundary({
+            rotate: true,
+            useModelGeometry: true,
+        });
+        let removeElementButton = new elementTools.Remove();
+        let connectbutton = new elementTools.Connect({
+            rotate: true,
+            useModelGeometry: true,
+            x: '100%',
+            y: '50%'
+        });
+        let toolsView = new dia.ToolsView({
+            tools: [
+                removeElementButton,
+                connectbutton,
+                boundaryTool
+            ]
+        });
+        element.findView(paper).addTools(toolsView);
     }
 }
 
