@@ -5,10 +5,10 @@ import { FormsModule } from '@angular/forms';
 import { dia } from '@joint/core';
 import { AccordionModule } from 'primeng/accordion';
 import { InputTextModule } from 'primeng/inputtext';
-import { ElementType } from '../../interface/palette.interface';
-import { ElementListService } from '../../services/elements/element-list.service';
-import { ElementService } from '../../services/elements/element.service';
-import { ElementSelectionFacadeService } from '../../store/facade/element-selection.facade.service';
+import { ElementType } from '../../../interface/palette.interface';
+import { ElementListService } from '../../../services/elements/element-list.service';
+import { ElementService } from '../../../services/elements/element.service';
+import { ElementSelectionFacadeService } from '../../../store/facade/element-selection.facade.service';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({

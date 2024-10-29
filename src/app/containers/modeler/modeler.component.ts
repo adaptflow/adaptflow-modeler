@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component } from '@angular/core';
 import { dia, linkTools, shapes } from '@joint/core';
-import { ElementsPaletteComponent } from '../../components/elements-palette/elements-palette.component';
-import { ModelerCanvasComponent } from '../../components/modeler-canvas/modeler-canvas.component';
-import { ModelerPropertiesComponent } from '../../components/modeler-properties/modeler-properties.component';
+import { ElementsPaletteComponent } from '../../components/modeler/elements-palette/elements-palette.component';
+import { ModelerCanvasComponent } from '../../components/modeler/modeler-canvas/modeler-canvas.component';
+import { ModelerPropertiesComponent } from '../../components/modeler/modeler-properties/modeler-properties.component';
 import { ElementSelectionFacadeService } from '../../store/facade/element-selection.facade.service';
 import * as _ from 'lodash';
 import { ElementService } from '../../services/elements/element.service';

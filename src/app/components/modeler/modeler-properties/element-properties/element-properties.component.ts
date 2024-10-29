@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import * as _ from 'lodash';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
-import { ElementSelectionFacadeService } from '../../../store/facade/element-selection.facade.service';
+import { ElementSelectionFacadeService } from '../../../../store/facade/element-selection.facade.service';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
