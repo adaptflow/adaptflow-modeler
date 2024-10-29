@@ -7,11 +7,13 @@ import { ModelerPropertiesComponent } from '../../components/modeler-properties/
 import { ElementSelectionFacadeService } from '../../store/facade/element-selection.facade.service';
 import * as _ from 'lodash';
 import { ElementService } from '../../services/elements/element.service';
+import { TopToolbarComponent } from "../../components/top-toolbar/top-toolbar.component";
+import { NavbarComponent } from "../../components/navbar/navbar.component";
 
 @Component({
   selector: 'app-modeler',
   standalone: true,
-  imports: [CommonModule, ElementsPaletteComponent, ModelerCanvasComponent, ModelerPropertiesComponent],
+  imports: [CommonModule, ElementsPaletteComponent, ModelerCanvasComponent, ModelerPropertiesComponent, TopToolbarComponent, NavbarComponent],
   templateUrl: './modeler.component.html',
   styleUrl: './modeler.component.scss'
 })

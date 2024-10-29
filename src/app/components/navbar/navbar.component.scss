@@ -1,0 +1,23 @@
+.navbar {
+    background-color: #041132;
+    color: #02177d;
+}
+
+.logo-img {
+    height: 40px;
+}
+
+.nav-links {
+    flex-grow: 1;
+    margin-left: 140px;
+}
+
+.nav-item {
+    color: #ffffff;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.nav-item:hover {
+    color: #cce6ff;
+}
