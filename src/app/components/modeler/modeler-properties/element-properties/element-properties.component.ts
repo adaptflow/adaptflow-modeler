@@ -42,21 +42,6 @@ export class ElementPropertiesComponent implements OnInit {
       }));
       console.log(this.selectedElementId, updatedValues);
       this.facadeService.onUpdate(this.selectedElementId, updatedValues);
-      // this.selectedElement.fields.forEach(field => {
-      //   console.log(this.elementPropertiesForm);
-      //   if(field.type=='input'){
-      //     field = {
-      //       ...field,
-      //       value: values[field.fieldId] || ''
-      //     }
-      //   }
-      //   if(field.type=='selection'){
-      //     field = {
-      //       ...field,
-      //       value: values[field.fieldId] || ''
-      //     }
-      //   }
-      // });
     });
   }
 

@@ -123,3 +123,49 @@ export const STORE_EMBEDDINGS = {
         }
     ]
 }
+
+export const CREDENTIAL_PROVIDERS = [
+    { 
+        name: 'Open AI',
+        services: [
+            {
+                name: 'Chat',
+                type: 'af.llm'
+            },
+            {
+                name: 'Embeddings',
+                type: 'af.embedding'
+            },
+            {
+                name: 'Vector Store',
+                type: 'af.vector'
+            }
+        ]
+    },
+    { 
+        name: 'Azure',
+        services: [
+            {
+                name: 'Chat',
+                type: 'af.llm'
+            },
+            {
+                name: 'Embeddings',
+                type: 'af.embedding'
+            }
+        ]
+    },
+    { 
+        name: 'Ollama',
+        services: [
+            {
+                name: 'Chat',
+                type: 'af.llm'
+            },
+            {
+                name: 'Embeddings',
+                type: 'af.embedding'
+            }
+        ]
+    }
+]
