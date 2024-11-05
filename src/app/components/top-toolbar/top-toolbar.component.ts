@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { ToolbarModule } from 'primeng/toolbar';
 import { TooltipModule } from 'primeng/tooltip';
@@ -11,6 +12,9 @@ import { TooltipModule } from 'primeng/tooltip';
   styleUrl: './top-toolbar.component.scss'
 })
 export class TopToolbarComponent {
+
+  constructor(private _router: Router) { }
+
   zoomIn() {
     console.log('Zoom In clicked');
     // Implement zoom in logic
@@ -37,7 +41,6 @@ export class TopToolbarComponent {
   }
 
   cancel() {
-    console.log('Cancel clicked');
-    // Implement cancel logic
+    this._router.navigateByUrl('/workspace');
   }
 }

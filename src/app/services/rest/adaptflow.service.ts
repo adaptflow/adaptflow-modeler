@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CREDENTIAL_PROVIDERS, GENERATE_EMBEDDINGS, LLM_PROVIDER, STORE_EMBEDDINGS } from './adaptflow-mock.data';
+import { CREDENTIAL_PROVIDERS, GENERATE_EMBEDDINGS, GET_ALL_CREDENTIALS, LLM_PROVIDER, STORE_EMBEDDINGS } from './adaptflow-mock.data';
 import * as Constants from '../../constants/elements.constant';
 
 @Injectable({
@@ -24,5 +24,9 @@ export class AdaptflowService {
 
   getCredentialProviders() {
     return CREDENTIAL_PROVIDERS;
+  }
+
+  getAllCredentials() {
+    return GET_ALL_CREDENTIALS;
   }
 }
