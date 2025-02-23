@@ -1,6 +1,7 @@
 # AdaptflowModeler
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.6.
+BPMN elements are implemented using     @joint/core: 4.0.4
 
 ## Problems
 1. To test RAG/Agents, we need to write repeativie/boilerplate code which needs technical skills. Non-technical users like Business analysts, operations managers, marketing/sales teams, etc. find it difficult to design and test AI agents. They may use codeless applications for the same.
