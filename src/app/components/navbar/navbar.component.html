@@ -9,4 +9,8 @@
         <a routerLink="/workspace" class="nav-item"><i class="pi pi-objects-column mr-2"></i>Workspace</a>
         <a routerLink="/configurations" class="nav-item ml-4"><i class="pi pi-cog mr-2"></i>Configurations</a>
     </div>
+    <div class="profile ml-auto">
+        <p-menu #menu [popup]="true" [model]="items"></p-menu>
+        <button type="button" pButton pRipple icon="pi pi-user" class="nav-item p-button-rounded p-button-text p-button-plain" (click)="menu.toggle($event)"></button>
+    </div>
 </div>
