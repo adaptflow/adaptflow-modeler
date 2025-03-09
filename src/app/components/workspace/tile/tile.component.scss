@@ -1,0 +1,19 @@
+.description {
+  margin-top: 5px;
+  font-size: smaller;
+}
+
+.last-modified {
+  margin-top: 5px;
+  font-size: x-small;
+  color: gray;
+}
+
+.tile-container {
+  cursor: pointer; /* Indicate it's clickable */
+}
+
+/* Optional: remove default panel header click behavior. If you still want to expand/collapse, don't use the code below */
+.tile-container .p-panel-header {
+    pointer-events: none;
+}

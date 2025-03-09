@@ -9,6 +9,7 @@ import * as _ from 'lodash';
 import { ElementService } from '../../services/elements/element.service';
 import { TopToolbarComponent } from "../../components/top-toolbar/top-toolbar.component";
 import { NavbarComponent } from "../../components/navbar/navbar.component";
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-modeler',
@@ -23,10 +24,15 @@ export class ModelerComponent implements AfterViewInit {
   hideElementTools: Boolean = true;
   startElement;
   endElement;
+  projectId!: string;
 
   constructor(
     private facadeService: ElementSelectionFacadeService,
-    private elementService: ElementService) {
+    private elementService: ElementService,
+    private route: ActivatedRoute) {
+      this.route.params.subscribe(params => {
+        this.projectId = params['projectId'];
+      });
 
   }
 

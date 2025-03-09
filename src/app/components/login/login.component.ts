@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
     const { username, password } = this.loginForm.value;
     this.authService.login(username, password).subscribe({
       next: () => {
-        this.router.navigate(['/modeler']);
+        this.router.navigate(['/workspace']);
       },
       error: (error) => {
         this.errorMessage = 'Invalid username or password.';

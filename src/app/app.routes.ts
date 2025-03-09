@@ -14,7 +14,7 @@ export const routes: Routes = [
         providers: []
     },
     {
-        path: 'modeler',
+        path: 'modeler/:projectId',
         component: ModelerComponent,
         canActivate: [authGuard],
         providers: [
@@ -37,7 +37,7 @@ export const routes: Routes = [
     },
     {
      path: '',
-     redirectTo: '/modeler',
+     redirectTo: '/workspace',
      pathMatch: 'full'
    }
 ];
