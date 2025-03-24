@@ -4,11 +4,19 @@ import { provideState } from '@ngrx/store';
 import { elementSelectionReducer } from './store/reducers/element-selection.reducer';
 import { WorkspaceComponent } from './containers/workspace/workspace.component';
 import { ConfigurationsComponent } from './containers/configurations/configurations.component';
+import { LoginComponent } from './components/login/login.component';
+import { authGuard } from './auth.guard';
 
 export const routes: Routes = [
     {
-        path: 'modeler',
+        path: 'login',
+        component: LoginComponent,
+        providers: []
+    },
+    {
+        path: 'modeler/:projectId',
         component: ModelerComponent,
+        canActivate: [authGuard],
         providers: [
             provideState({
                 name:'elementSelection', reducer: elementSelectionReducer
@@ -18,11 +26,18 @@ export const routes: Routes = [
     {
         path: 'workspace',
         component: WorkspaceComponent,
+        canActivate: [authGuard],
         providers: []
     },
     {
         path: 'configurations',
         component: ConfigurationsComponent,
+        canActivate: [authGuard],
         providers: []
-    }
+    },
+    {
+     path: '',
+     redirectTo: '/workspace',
+     pathMatch: 'full'
+   }
 ];

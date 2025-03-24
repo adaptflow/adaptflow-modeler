@@ -1,8 +1,12 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
+import { dia } from '@joint/core';
 import { ButtonModule } from 'primeng/button';
 import { ToolbarModule } from 'primeng/toolbar';
 import { TooltipModule } from 'primeng/tooltip';
+import { ElementSelectionFacadeService } from '../../store/facade/element-selection.facade.service';
+import { take } from 'rxjs';
+import { ExportService } from '../../services/bpmn/export.service';
 
 @Component({
   selector: 'top-toolbar',
@@ -11,9 +15,27 @@ import { TooltipModule } from 'primeng/tooltip';
   templateUrl: './top-toolbar.component.html',
   styleUrl: './top-toolbar.component.scss'
 })
-export class TopToolbarComponent {
+export class TopToolbarComponent implements OnInit, OnChanges {
+  @Input()
+  graph: dia.Graph;
 
-  constructor(private _router: Router) { }
+  constructor(private _router: Router,
+    private facadeService: ElementSelectionFacadeService,
+    private cdr: ChangeDetectorRef,
+    private exportService: ExportService
+  ) { }
+
+  ngOnInit(): void {
+    this.cdr.detectChanges();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['graph']) {
+      this.cdr.detectChanges();
+      // Handle changes to 'graph' here if needed
+      console.log('Graph changed', this.graph);
+    }
+  }
 
   zoomIn() {
     console.log('Zoom In clicked');
@@ -27,6 +49,12 @@ export class TopToolbarComponent {
 
   save() {
     console.log('Save clicked');
+    let graphJson = this.graph.toJSON();
+    this.facadeService.selectedElement$.pipe(take(1)).subscribe((elementSelection) => {
+      console.log('graphJson:\n', graphJson);
+      console.log('elementSelections:\n', elementSelection);
+      console.log('BPMN modeL: \n', this.exportService.convertToBpmnXML(graphJson));
+    });
     // Implement save logic
   }
 
@@ -37,7 +65,6 @@ export class TopToolbarComponent {
 
   export() {
     console.log('Export clicked');
-    // Implement export logic
   }
 
   cancel() {

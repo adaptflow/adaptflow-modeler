@@ -9,6 +9,7 @@ import * as _ from 'lodash';
 import { ElementService } from '../../services/elements/element.service';
 import { TopToolbarComponent } from "../../components/top-toolbar/top-toolbar.component";
 import { NavbarComponent } from "../../components/navbar/navbar.component";
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-modeler',
@@ -23,10 +24,15 @@ export class ModelerComponent implements AfterViewInit {
   hideElementTools: Boolean = true;
   startElement;
   endElement;
+  projectId!: string;
 
   constructor(
     private facadeService: ElementSelectionFacadeService,
-    private elementService: ElementService) {
+    private elementService: ElementService,
+    private route: ActivatedRoute) {
+      this.route.params.subscribe(params => {
+        this.projectId = params['projectId'];
+      });
 
   }
 
@@ -55,14 +61,15 @@ export class ModelerComponent implements AfterViewInit {
   addStartAndEndElement() {
     this.startElement = new shapes.standard.Circle();
     this.startElement.resize(50, 50);
-    this.startElement.attr('root/title', 'shapes.standard.Circle');
     this.startElement.attr('label/text', 'Start');
+    this.startElement.prop({'type': 'standard.Start'});
     this.graph.addCell(this.startElement);
     this.elementService.addTools(this.paper, this.startElement);
 
     this.endElement = new shapes.standard.Circle();
     this.endElement.resize(50, 50);
     this.endElement.attr('label/text', 'End');
+    this.endElement.prop({'type': 'standard.End'});
     this.graph.addCell(this.endElement);
     this.elementService.addTools(this.paper, this.endElement);
     this.updateElementPositions();

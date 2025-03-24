@@ -1,0 +1,20 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Force 3 columns */
+  grid-gap: 10px; /* Adjust spacing as needed */
+}
+
+.grid-row {
+  /* No longer needed as grid handles row creation */
+}
+
+.grid-col {
+  /* No longer needed  */
+}
+
+/* Add some basic styling to prevent unexpected overflow */
+.grid-col > * { /* Target the direct child of .grid-col */
+    width: 100%; /* Ensure tile occupies full column width */
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+

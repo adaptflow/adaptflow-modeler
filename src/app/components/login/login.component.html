@@ -1,0 +1,46 @@
+<div class="grid">
+    <div class="col-12 md:col-6 flex align-items-center justify-content-center">
+        <div class="flex align-items-center justify-content-center">
+            <img src="favicon.ico" alt="Logo" height="50" class="mr-2">
+            <h1 class="text-900 font-bold text-5xl mb-3">Adaptflow Modeler</h1>
+        </div>
+        <div class="text-600 mb-5">
+        </div>
+    </div>
+    <div class="col-12 md:col-6 p-6 flex align-items-center justify-content-center"
+        style="min-height: 100vh;">
+        <div class="p-4 border-round shadow-2 w-full md:w-30rem login-form">
+            <div class="text-900 font-medium text-xl mb-3">Login</div>
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <div class="field mb-3">
+                    <label for="email" class="block text-900 font-medium mb-2">Username</label>
+                    <input id="email" type="text" pInputText class="w-full" formControlName="username" />
+                    <div *ngIf="username?.invalid && (username?.dirty || username?.touched)" class="error-message">
+                        <div *ngIf="username?.errors?.['required']">
+                            Username is required.
+                        </div>
+                   </div>
+                </div>
+                <div class="field mb-3">
+                    <label for="password" class="block text-900 font-medium mb-2">Password</label>
+                    <input id="password" type="password" pInputText class="w-full" formControlName="password" />
+                    <div *ngIf="password?.invalid && (password?.dirty || password?.touched)" class="error-message">
+                        <div *ngIf="password?.errors?.['required']">
+                            Password is required.
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="errorMessage" class="error-message">
+                    {{ errorMessage }}
+                  </div>
+                <div class="flex align-items-center justify-content-between mb-3">
+                    <p-checkbox inputId="rememberme" [binary]="true"></p-checkbox>
+                    <label for="rememberme" class="ml-2">Remember me</label>
+                    <a class="font-medium no-underline ml-auto text-blue-500 text-right cursor-pointer">Forgot Password?</a>
+                </div>
+                <button pButton pRipple type="submit" label="Login" [disabled]="loginForm.invalid || loading" class="w-full"></button>
+            </form>
+        </div>
+    </div>
+</div>
+<p-toast />

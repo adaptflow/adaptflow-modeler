@@ -1,0 +1,6 @@
+<div class="tile-container" pRipple (click)="openModeler(project.id)">
+  <p-panel pRipple header="{{ project.name }}">
+      <p class="description">{{ project.description }}</p>
+      <p class="last-modified">Last modified: {{ project.lastModified | date }}</p>
+  </p-panel>
+</div>

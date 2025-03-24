@@ -1,0 +1,7 @@
+<div class="grid">
+    <div class="grid-row" *ngFor="let project of projectRows.flat()">
+        <div class="p-2">
+            <tile [project]="project"></tile>
+        </div>
+    </div>
+</div>
