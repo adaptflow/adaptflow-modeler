@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { CREDENTIAL_PROVIDERS, GENERATE_EMBEDDINGS, GET_ALL_CREDENTIALS, LLM_PROVIDER, STORE_EMBEDDINGS } from './adaptflow-mock.data';
+import { CREDENTIAL_PROVIDERS, GENERATE_EMBEDDINGS, GET_ALL_CREDENTIALS, LLM_PROVIDER, PROCESS_DEFINITION, STORE_EMBEDDINGS } from './adaptflow-mock.data';
 import * as Constants from '../../constants/elements.constant';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { AF_URLS } from './url.constant';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { UserDetails } from '../../interface/user-details.interface';
 
 @Injectable({
@@ -53,5 +53,9 @@ export class AdaptflowService {
 
   getUserDetails(): Observable<UserDetails> {
     return this.http.get<UserDetails>(this.apiBaseUrl + AF_URLS.getUserDetailsUrl(), this.httpOptions);
+  }
+
+  getProcessDefinition(processId: string): Observable<any> {
+    return this.http.get<any>(this.apiBaseUrl + AF_URLS.getProcessDefinitionUrl(processId), this.httpOptions);
   }
 }

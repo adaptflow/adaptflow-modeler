@@ -10,5 +10,8 @@ export const AF_URLS = {
     },
     getAllCredentialsUrl() {
         return '/api/credentials';
+    },
+    getProcessDefinitionUrl(processId: string) {
+        return '/api/process/' + processId;
     }
 }

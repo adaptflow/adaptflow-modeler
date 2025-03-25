@@ -17,7 +17,7 @@ export class TileComponent {
 
   constructor(private router: Router) {}
 
-  openModeler(projectId: string) {
-    this.router.navigate(['/modeler', projectId]);
+  openModeler(processId: string) {
+    this.router.navigate(['/modeler', processId]);
   }
 }

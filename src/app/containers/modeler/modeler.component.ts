@@ -6,10 +6,13 @@ import { ModelerCanvasComponent } from '../../components/modeler/modeler-canvas/
 import { ModelerPropertiesComponent } from '../../components/modeler/modeler-properties/modeler-properties.component';
 import { ElementSelectionFacadeService } from '../../store/facade/element-selection.facade.service';
 import * as _ from 'lodash';
-import { ElementService } from '../../services/elements/element.service';
+import { End, LLMProvider, Start } from '../../services/elements/element.service';
 import { TopToolbarComponent } from "../../components/top-toolbar/top-toolbar.component";
 import { NavbarComponent } from "../../components/navbar/navbar.component";
 import { ActivatedRoute } from '@angular/router';
+import { AdaptflowService } from '../../services/rest/adaptflow.service';
+import { ImportService } from '../../services/bpmn/import.service';
+import { ProcessManagerService } from '../../services/bpmn/process-manager.service';
 
 @Component({
   selector: 'app-modeler',
@@ -24,20 +27,23 @@ export class ModelerComponent implements AfterViewInit {
   hideElementTools: Boolean = true;
   startElement;
   endElement;
-  projectId!: string;
+  processId!: string;
 
   constructor(
     private facadeService: ElementSelectionFacadeService,
-    private elementService: ElementService,
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute,
+    private adaptflowService: AdaptflowService,
+    private processManagerService: ProcessManagerService,
+    private importService: ImportService) {
       this.route.params.subscribe(params => {
-        this.projectId = params['projectId'];
+        this.processId = params['processId'];
       });
 
   }
 
   ngAfterViewInit(): void {
-    this.graph = new dia.Graph({}, { cellNamespace: shapes });
+    const namespace = { ...shapes, adaptflow: { Start, End, LLMProvider }};
+    this.graph = new dia.Graph({}, { cellNamespace: namespace });
     this.paper = new dia.Paper({
       el: document.getElementById('canvasContainer'),
       model: this.graph,
@@ -45,7 +51,7 @@ export class ModelerComponent implements AfterViewInit {
       height: "100%",
       gridSize: 1,
       drawGrid: true,
-      cellViewNamespace: shapes,
+      cellViewNamespace: namespace,
       defaultLink: () => new shapes.standard.Link(),
       linkPinning: false,
       defaultConnector: {
@@ -53,37 +59,21 @@ export class ModelerComponent implements AfterViewInit {
       }
     });
     this.addEventListeners();
-    this.addStartAndEndElement();
-    window.addEventListener('resize', () => this.updateElementPositions());
+    if(this.processId==null) {
+      this.processManagerService.addStartAndEndElement(this.graph, this.paper, this.startElement, this.endElement);
+      window.addEventListener('resize', () => this.processManagerService.updateElementPositions(this.startElement, this.endElement));
+    } else {
+      this.loadProcess();
+    }
     this.paper.hideTools();
   }
 
-  addStartAndEndElement() {
-    this.startElement = new shapes.standard.Circle();
-    this.startElement.resize(50, 50);
-    this.startElement.attr('label/text', 'Start');
-    this.startElement.prop({'type': 'standard.Start'});
-    this.graph.addCell(this.startElement);
-    this.elementService.addTools(this.paper, this.startElement);
-
-    this.endElement = new shapes.standard.Circle();
-    this.endElement.resize(50, 50);
-    this.endElement.attr('label/text', 'End');
-    this.endElement.prop({'type': 'standard.End'});
-    this.graph.addCell(this.endElement);
-    this.elementService.addTools(this.paper, this.endElement);
-    this.updateElementPositions();
-
-  }
-
-  updateElementPositions() {
-    // Get the container dimensions
-    const container = document.getElementById('canvasContainer');
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
-
-    this.startElement.position(20, containerHeight / 2 - 25);
-    this.endElement.position(containerWidth - 70, containerHeight / 2 - 25);
+  loadProcess() {
+    this.adaptflowService.getProcessDefinition(this.processId).subscribe(res => {
+      this.importService.import(this.graph, this.paper, res.xml).then(() => {
+        console.log("Import successful!");
+      });
+    });
   }
 
 

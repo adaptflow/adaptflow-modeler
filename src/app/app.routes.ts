@@ -14,7 +14,17 @@ export const routes: Routes = [
         providers: []
     },
     {
-        path: 'modeler/:projectId',
+        path: 'modeler',
+        component: ModelerComponent,
+        canActivate: [authGuard],
+        providers: [
+            provideState({
+                name:'elementSelection', reducer: elementSelectionReducer
+            })
+        ]
+    },
+    {
+        path: 'modeler/:processId',
         component: ModelerComponent,
         canActivate: [authGuard],
         providers: [

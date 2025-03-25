@@ -44,9 +44,9 @@ export class ExportService {
       let bpmnElement;
       let bpmndiElement;
 
-      if (cell.type === 'standard.Start') {
+      if (cell.type === 'adaptflow.Start') {
         bpmnElement = moddle.create('bpmn:StartEvent', { id: 'af-' + cell.id, name: cell.attrs.label.text });
-      } else if (cell.type === 'standard.End') {
+      } else if (cell.type === 'adaptflow.End') {
         bpmnElement = moddle.create('bpmn:EndEvent', { id: 'af-' + cell.id, name: cell.attrs.label.text });
       } else if (cell.type === Constants.ELEMENT_TYPE_LLM_PROVIDER) {
         bpmnElement = moddle.create('bpmn:ServiceTask', { id: 'af-' + cell.id, name: cell.attrs.label.text,

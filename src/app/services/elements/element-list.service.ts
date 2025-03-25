@@ -15,31 +15,31 @@ export class ElementListService {
         {
           name: "Condition",
           shape: "af.polygon",
-          type: "af.standard"
+          type: "adaptflow.Condition"
         }]
       },
       {
         type: "LLM",
         elements: [{
           name: "LLM Provider",
-          type: "af.llm.provider"
+          type: "adaptflow.LLMProvider"
         }]
       },
       {
         type: "Embeddings",
         elements: [{
           name: "Generate Embeddings",
-          type: "af.embeddings.generate"
+          type: "adaptflow.GenerateEmbeddings"
         },{
           name: "Store Embeddings",
-          type: "af.embeddings.store"
+          type: "adaptflow.StoreEmbeddings"
         }]
       },
       {
         type: "Store",
         elements: [{
           name: "Elastic Search",
-          type: "af.vector-store.elasticSearch"
+          type: "adaptflow.ElasticSearch"
         }]
       }
     ];
