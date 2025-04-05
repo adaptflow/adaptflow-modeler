@@ -1,12 +1,17 @@
 import { Injectable } from '@angular/core';
 import { dia, elementTools, shapes, util } from '@joint/core';
 import * as Constants from '../../constants/elements.constant';
+import { ElementInstanceService } from './element-instance.service';
+import { ElementSelectionFacadeService } from '../../store/facade/element-selection.facade.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ElementService {
-    constructor() { }
+    constructor(
+        private elementInstanceService: ElementInstanceService,
+        private facadeService: ElementSelectionFacadeService
+    ) { }
 
     public getElement(element, position) {
         let newElement;
@@ -34,7 +39,7 @@ export class ElementService {
         return newElement;
     }
 
-    public addAdaptElementInGraph(graph, paper, element) {
+    public addAdaptElementInGraph(graph, paper, element, fields) {
         if(element['type'] == 'bpmn:StartEvent') {
             let adaptElement = new Start({id: element['id']});
             adaptElement.resize(50, 50);
@@ -58,10 +63,11 @@ export class ElementService {
         if(element['type'] == 'bpmn:ServiceTask') {
             let adaptElement = new Node({id: element['id']});
             adaptElement.attr('label/text', element['name']);
-            adaptElement.prop({'type': Constants.ELEMENT_TYPE_LLM_PROVIDER});
+            adaptElement.prop({'type': element['taskType']});
             adaptElement.position(element['position'].x, element['position'].y);
             graph.addCell(adaptElement);
             this.addTools(paper, adaptElement);
+            this.facadeService.onElementImport(element['id'], fields);
             return;
         }
         if(element['type'] == 'bpmn:SequenceFlow') {

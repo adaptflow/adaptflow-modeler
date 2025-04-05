@@ -16,8 +16,8 @@ export class ProcessManagerService {
     return newElement.id;
   }
 
-  public getAndAddElementToCanvas(graph, paper, element) {
-    this.elementService.addAdaptElementInGraph(graph, paper, element);
+  public getAndAddElementToCanvas(graph, paper, element, fields) {
+    this.elementService.addAdaptElementInGraph(graph, paper, element, fields);
   }
 
   public addStartAndEndElement(graph, paper, startElement, endElement) {
@@ -45,5 +45,9 @@ export class ProcessManagerService {
 
     startElement.position(20, containerHeight / 2 - 25);
     endElement.position(containerWidth - 70, containerHeight / 2 - 25);
+  }
+
+  public updateElementProperty(graph, elementId: string, propertyName: string, propertyValue: string) {
+    graph.getCell(elementId).prop(propertyName, propertyValue);
   }
 }

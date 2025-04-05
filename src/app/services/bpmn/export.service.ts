@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
 import BpmnModdle from 'bpmn-moddle';
 import * as Constants from '../../constants/elements.constant';
-import { ImportService } from './import.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExportService {
 
-  constructor(private importService:ImportService) { }
+  constructor() { }
 
   convertToBpmnXML(jointjsDiagramJSON) {
     const process = this.mapJointJSToBPMN(jointjsDiagramJSON);
@@ -26,6 +25,7 @@ export class ExportService {
 
   private mapJointJSToBPMN(jointjsDiagramJSON) {
     let adaptFlowNs = 'http://adaptflow.org/schema/1.0/bpmn';
+    let activitiNs = 'http://activiti.org/bpmn'; 
     const bpmnElements = [];
     const bpmnFlows = [];
     const elementMap = {};
@@ -53,11 +53,14 @@ export class ExportService {
           'activiti:class':"com.adaptflow.af_serverj.features.llm.LLMProviderDelegate"
          });
         bpmnElement.extensionElements = moddle.create('bpmn:ExtensionElements');
-        var inputParameter = moddle.createAny('activiti:string', adaptFlowNs, {
+        var inputParameter = moddle.createAny('activiti:string', activitiNs, {
           $body: '<![CDATA[openai-key-id]]>'
         });
         bpmnElement.extensionElements.values = [
-          moddle.createAny('activiti:field', adaptFlowNs, {
+          moddle.createAny('adaptflow:taskDefinition', adaptFlowNs, {
+            type: Constants.ELEMENT_TYPE_LLM_PROVIDER
+          }),
+          moddle.createAny('activiti:field', activitiNs, {
             name: 'credentialId',
             $children: [
               inputParameter

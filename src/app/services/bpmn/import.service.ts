@@ -9,7 +9,7 @@ import { ProcessManagerService } from './process-manager.service';
 export class ImportService {
   constructor(private processManagerService: ProcessManagerService) { }
 
-  async import(graph, paper, xml: string): Promise<any> {
+  async import(graph, paper, xml: string, fields): Promise<any> {
     const moddle = new BpmnModdle();
     const result = await moddle.fromXML(xml);
 
@@ -20,15 +20,18 @@ export class ImportService {
 
     //Map BPMN elements to JointJS cells
     process.flowElements.forEach(element => {
-      let type;
-      let attrs = {};
       element.id = element.id.replace(/^af-/, '');
       let elementAttributes = { id: element.id };
 
-      if (element.$type === 'bpmn:StartEvent' || element.$type === 'bpmn:EndEvent' || element.$type === 'bpmn:ServiceTask') {
+      if (element.$type === 'bpmn:StartEvent' || element.$type === 'bpmn:EndEvent') {
         elementAttributes['type'] = element.$type;
         elementAttributes['name'] = element.name;
-      } else if (element.$type === 'bpmn:SequenceFlow') {
+      } else if (element.$type === 'bpmn:ServiceTask') {
+        elementAttributes['type'] = element.$type;
+        elementAttributes['name'] = element.name;
+        elementAttributes['taskType'] = this.findTaskType(element);
+      }
+      else if (element.$type === 'bpmn:SequenceFlow') {
         return;
       } else {
         console.warn(`Unsupported element type: ${element.$type}`);
@@ -41,7 +44,12 @@ export class ImportService {
 
       elementAttributes['position'] = position;
       elementAttributes['size'] = size;
-      this.processManagerService.getAndAddElementToCanvas(graph, paper, elementAttributes);
+      let fieldByElementId = fields['af-' + element.id]
+      if(fieldByElementId) {
+        this.processManagerService.getAndAddElementToCanvas(graph, paper, elementAttributes, fieldByElementId);
+      } else {
+        this.processManagerService.getAndAddElementToCanvas(graph, paper, elementAttributes, null);
+      }
     });
 
 
@@ -52,7 +60,7 @@ export class ImportService {
         elementAttributes['type'] = element.$type;
         elementAttributes['source'] = { id: element.sourceRef.id };
         elementAttributes['target'] = { id: element.targetRef.id };
-        this.processManagerService.getAndAddElementToCanvas(graph, paper, elementAttributes);
+        this.processManagerService.getAndAddElementToCanvas(graph, paper, elementAttributes, null);
       }
     });
     paper.hideTools();
@@ -66,5 +74,12 @@ export class ImportService {
       return shapeOrEdge;
     }
     return null;
+  }
+
+  private findTaskType(element) {
+    let taskDefinition = element.extensionElements.values.find(extension => extension.$type === "adaptflow:taskDefinition")
+    if(taskDefinition) {
+      return taskDefinition.type;
+    }
   }
 }

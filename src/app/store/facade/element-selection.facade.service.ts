@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { Observable } from "rxjs";
-import { elementDeselected, elementDropped, elementRemoved, elementSelected, updateElementAttributes } from "../actions/element-selection.action";
+import { elementDeselected, elementDropped, elementImport, elementRemoved, elementSelected, updateElementAttributes } from "../actions/element-selection.action";
 import { ElementInstanceService } from "../../services/elements/element-instance.service";
 
 @Injectable({
@@ -41,5 +41,12 @@ export class ElementSelectionFacadeService {
 
     onRemove(elementId) {
         this.store.dispatch(elementRemoved({elementId: elementId}));
+    }
+
+    onElementImport(elementId, attributes) {
+        this.store.dispatch(elementImport({
+            elementId: elementId,
+            attributes: attributes
+        }));
     }
 }

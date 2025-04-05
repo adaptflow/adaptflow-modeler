@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { elementDeselected, elementDropped, elementRemoved, elementSelected, updateElementAttributes } from '../actions/element-selection.action';
+import { elementDeselected, elementDropped, elementImport, elementRemoved, elementSelected, updateElementAttributes } from '../actions/element-selection.action';
 import omit from 'lodash/omit'; 
 
 export interface ElementSelectionState {
@@ -19,6 +19,13 @@ export const elementSelectionReducer = createReducer(
         elements: {
         ...state.elements,
         [newState.elementId]: newState.attributes
+        }
+    })),
+    on(elementImport, (state, element) => ({
+        ...state,
+        elements: {
+            ...state.elements,
+            [element.elementId]: element.attributes
         }
     })),
     on(elementSelected, (state, { elementId }) => ({

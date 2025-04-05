@@ -6,6 +6,11 @@ export const elementDropped = createAction(
     props<{elementId: string; attributes: any}>()
 );
 
+export const elementImport = createAction(
+    '[Canvas] Element Imported',
+    props<{elementId: string; attributes: any}>()
+);
+
 export const elementSelected = createAction(
     '[Canvas] Element Selected',
     props<{elementId: string}>()

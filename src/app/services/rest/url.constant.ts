@@ -13,5 +13,8 @@ export const AF_URLS = {
     },
     getProcessDefinitionUrl(processId: string) {
         return '/api/process/' + processId;
+    },
+    getFieldListByProcessIdUrl(processId: string) {
+        return '/api/process/fields' + processId;
     }
 }

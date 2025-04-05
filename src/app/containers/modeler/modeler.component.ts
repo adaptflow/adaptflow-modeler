@@ -1,18 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { dia, linkTools, shapes } from '@joint/core';
 import { ElementsPaletteComponent } from '../../components/modeler/elements-palette/elements-palette.component';
 import { ModelerCanvasComponent } from '../../components/modeler/modeler-canvas/modeler-canvas.component';
 import { ModelerPropertiesComponent } from '../../components/modeler/modeler-properties/modeler-properties.component';
 import { ElementSelectionFacadeService } from '../../store/facade/element-selection.facade.service';
 import * as _ from 'lodash';
-import { End, LLMProvider, Start } from '../../services/elements/element.service';
 import { TopToolbarComponent } from "../../components/top-toolbar/top-toolbar.component";
 import { NavbarComponent } from "../../components/navbar/navbar.component";
 import { ActivatedRoute } from '@angular/router';
 import { AdaptflowService } from '../../services/rest/adaptflow.service';
 import { ImportService } from '../../services/bpmn/import.service';
 import { ProcessManagerService } from '../../services/bpmn/process-manager.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-modeler',
@@ -21,7 +21,7 @@ import { ProcessManagerService } from '../../services/bpmn/process-manager.servi
   templateUrl: './modeler.component.html',
   styleUrl: './modeler.component.scss'
 })
-export class ModelerComponent implements AfterViewInit {
+export class ModelerComponent implements OnInit {
   graph: dia.Graph;
   paper: dia.Paper;
   hideElementTools: Boolean = true;
@@ -41,9 +41,8 @@ export class ModelerComponent implements AfterViewInit {
 
   }
 
-  ngAfterViewInit(): void {
-    const namespace = { ...shapes, adaptflow: { Start, End, LLMProvider }};
-    this.graph = new dia.Graph({}, { cellNamespace: namespace });
+  ngOnInit(): void {
+    this.graph = new dia.Graph({}, { cellNamespace: shapes });
     this.paper = new dia.Paper({
       el: document.getElementById('canvasContainer'),
       model: this.graph,
@@ -51,7 +50,7 @@ export class ModelerComponent implements AfterViewInit {
       height: "100%",
       gridSize: 1,
       drawGrid: true,
-      cellViewNamespace: namespace,
+      cellViewNamespace: shapes,
       defaultLink: () => new shapes.standard.Link(),
       linkPinning: false,
       defaultConnector: {
@@ -69,13 +68,15 @@ export class ModelerComponent implements AfterViewInit {
   }
 
   loadProcess() {
-    this.adaptflowService.getProcessDefinition(this.processId).subscribe(res => {
-      this.importService.import(this.graph, this.paper, res.xml).then(() => {
+    forkJoin([
+      this.adaptflowService.getProcessDefinition(this.processId),
+      this.adaptflowService.getFieldListByProcessId(this.processId)
+    ]).subscribe(result => {
+      this.importService.import(this.graph, this.paper, result[0].xml, result[1]).then(() => {
         console.log("Import successful!");
       });
     });
   }
-
 
   addEventListeners() {
     this.paper.on('element:pointerclick', (elementView) => {

@@ -4,8 +4,9 @@
   
     <ng-template pTemplate="center">
       <div class="flex align-items-center justify-content-center">
-        <p-button icon="pi pi-search" (click)="zoomIn()" styleClass="p-button-rounded p-button-text" aria-label="Zoom In"></p-button>
+        <p-button icon="pi pi-search-plus" (click)="zoomIn()" styleClass="p-button-rounded p-button-text" aria-label="Zoom In"></p-button>
         <p-button icon="pi pi-search-minus" (click)="zoomOut()" styleClass="p-button-rounded p-button-text ml-2" aria-label="Zoom Out"></p-button>
+        <p-button icon="pi pi-refresh" (click)="resetPaperPosition()" styleClass="p-button-rounded p-button-text ml-2" aria-label="Reset Position"></p-button>
       </div>
     </ng-template>
   

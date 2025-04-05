@@ -1,1 +1,17 @@
-<p>general-properties works!</p>
+<form [formGroup]="generalPropertiesForm">
+  <div class="field">
+    <label for="processName">Process Name</label>
+    <input
+      id="processName"
+      type="text"
+      pInputText
+      formControlName="processName"
+    />
+    <div class="mt-1">
+      <ng-container *ngIf="processName?.invalid">
+          <small *ngIf="processName?.errors?.['required']" class="p-error">Process Name is required.</small>
+          <small *ngIf="processName?.errors?.['minlength']" class="p-error">Process Name must be at least 3 characters long.</small>
+      </ng-container>
+    </div>
+  </div>
+</form>
