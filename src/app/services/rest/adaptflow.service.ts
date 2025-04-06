@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CREDENTIAL_PROVIDERS, FIELD_LIST_BY_PROCESS_ID, GENERATE_EMBEDDINGS, GET_ALL_CREDENTIALS, LLM_PROVIDER, PROCESS_DEFINITION, STORE_EMBEDDINGS } from './adaptflow-mock.data';
+import { CREDENTIAL_PROVIDERS, GENERATE_EMBEDDINGS, GET_ALL_CREDENTIALS, LLM_PROVIDER, PROCESS_DEFINITION, STORE_EMBEDDINGS } from './adaptflow-mock.data';
 import * as Constants from '../../constants/elements.constant';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
@@ -58,10 +58,5 @@ export class AdaptflowService {
   getProcessDefinition(processId: string): Observable<any> {
     // return this.http.get<any>(this.apiBaseUrl + AF_URLS.getProcessDefinitionUrl(processId), this.httpOptions);
     return of(PROCESS_DEFINITION);
-  }
-
-  getFieldListByProcessId(processId: string): Observable<any> {
-    // return this.http.get<any>(this.apiBaseUrl + AF_URLS.getFieldListByProcessIdUrl(processId), this.httpOptions);
-    return of(FIELD_LIST_BY_PROCESS_ID);
   }
 }

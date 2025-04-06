@@ -180,7 +180,7 @@ export const GET_ALL_CREDENTIALS = [
 ];
 
 export const PROCESS_DEFINITION = {
-    xml: `<?xml version="1.0" encoding="UTF-8"?>
+    bpmnXml: `<?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:adaptflow="http://adaptflow.org/schema/1.0/bpmn" xmlns:activiti="http://activiti.org/bpmn" id="Definitions_1742974848998" targetNamespace="http://adaptflow.io/schema/bpmn" exporter="AdaptFlow Modeler">
   <bpmn:process id="Process_1" name="My Process">
     <bpmn:startEvent id="af-8e360c1a-197a-45f3-bd6b-2b2c08043523" name="Start">
@@ -223,36 +223,45 @@ export const PROCESS_DEFINITION = {
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
-</bpmn:definitions>`
-}
-
-export const FIELD_LIST_BY_PROCESS_ID = {
-    "af-66253cef-2cbe-48a4-ba07-bba2875c6c00": {
-        "name": "LLM Provider",
-        "category": "af.llm",
-        "type": "adaptflow.LLMProvider",
-        "fields": [
-            {
-                "fieldId": "000001",
-                "type": "input",
-                "label": "Name",
-                "value": "LLM Provider"
-            },
-            {
-                "fieldId": "000003",
-                "type": "selection",
-                "label": "Credentials",
-                "options": [
-                    {
+</bpmn:definitions>`,
+    fields: {
+        "af-66253cef-2cbe-48a4-ba07-bba2875c6c00": {
+            "name": "LLM Provider",
+            "category": "af.llm",
+            "type": "adaptflow.LLMProvider",
+            "fields": [
+                {
+                    "fieldId": "000001",
+                    "type": "input",
+                    "label": "Name",
+                    "value": "LLM Provider"
+                },
+                {
+                    "fieldId": "000003",
+                    "type": "selection",
+                    "label": "Credentials",
+                    "options": [
+                        {
+                            type: 'af.credential',
+                            name: 'embeddings-openai'
+                        }
+                    ],
+                    "value": {
                         type: 'af.credential',
                         name: 'embeddings-openai'
                     }
-                ],
-                "value": {
-                    type: 'af.credential',
-                    name: 'embeddings-openai'
                 }
-            }
-        ]
-    }
+            ]
+        }
+    },
+    generalProperties: [
+        {
+            id: 'processName',
+            name: 'Process Name',
+            type: 'text',
+            required: true,
+            minLength: 3,
+            value: 'Sample RAG',
+        }
+    ]
 }

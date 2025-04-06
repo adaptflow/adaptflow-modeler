@@ -1,19 +1,27 @@
 import { Injectable } from '@angular/core';
 import { ElementService } from '../elements/element.service';
 import { shapes } from '@joint/core';
+import { GeneralPropertiesService } from '../elements/general-properties.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProcessManagerService {
 
-  constructor(private elementService: ElementService) { }
+  constructor(
+    private elementService: ElementService,
+    private generalPropertiesService: GeneralPropertiesService
+  ) { }
 
   public addElementToCanvas(graph, paper, element, position: { x: number, y: number }) {
     let newElement = this.elementService.getElement(element, position);
     graph.addCell(newElement);
     this.elementService.addTools(paper, newElement);
     return newElement.id;
+  }
+
+  public addGeneralProperties(generalProperties, formName: string) {
+    this.generalPropertiesService.addGeneralProperties(generalProperties, formName);
   }
 
   public getAndAddElementToCanvas(graph, paper, element, fields) {

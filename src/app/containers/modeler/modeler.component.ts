@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { dia, linkTools, shapes } from '@joint/core';
 import { ElementsPaletteComponent } from '../../components/modeler/elements-palette/elements-palette.component';
 import { ModelerCanvasComponent } from '../../components/modeler/modeler-canvas/modeler-canvas.component';
@@ -13,6 +13,7 @@ import { AdaptflowService } from '../../services/rest/adaptflow.service';
 import { ImportService } from '../../services/bpmn/import.service';
 import { ProcessManagerService } from '../../services/bpmn/process-manager.service';
 import { forkJoin } from 'rxjs';
+import { TabView } from 'primeng/tabview';
 
 @Component({
   selector: 'app-modeler',
@@ -28,6 +29,7 @@ export class ModelerComponent implements OnInit {
   startElement;
   endElement;
   processId!: string;
+  @ViewChild(ModelerPropertiesComponent) modelerPropertiesComponent: ModelerPropertiesComponent;
 
   constructor(
     private facadeService: ElementSelectionFacadeService,
@@ -68,11 +70,8 @@ export class ModelerComponent implements OnInit {
   }
 
   loadProcess() {
-    forkJoin([
-      this.adaptflowService.getProcessDefinition(this.processId),
-      this.adaptflowService.getFieldListByProcessId(this.processId)
-    ]).subscribe(result => {
-      this.importService.import(this.graph, this.paper, result[0].xml, result[1]).then(() => {
+    this.adaptflowService.getProcessDefinition(this.processId).subscribe(processDefinition => {
+      this.importService.import(this.graph, this.paper, processDefinition.bpmnXml, processDefinition.fields, processDefinition.generalProperties).then(() => {
         console.log("Import successful!");
       });
     });
@@ -83,6 +82,10 @@ export class ModelerComponent implements OnInit {
       this.paper.hideTools();
       elementView.showTools();
       this.facadeService.onSelected(elementView.model.id.toString());
+      // Select the second tab (index 1) in ModelerPropertiesComponent
+      // if (this.modelerPropertiesComponent && this.modelerPropertiesComponent.tabView) {
+      //   this.modelerPropertiesComponent.tabView.activeIndex = 1;
+      // }
     });
 
     //Hide all tools on blank canvas click

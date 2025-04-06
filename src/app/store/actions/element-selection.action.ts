@@ -27,3 +27,7 @@ export const elementRemoved = createAction(
     '[Canvas] Element Deselected',
     props<{elementId: string}>()
 );
+export const updateGeneralProperties = createAction(
+    '[Element Properties] Update General Properties',
+    props<{ generalProperties: any, updateByForm: string }>()
+);

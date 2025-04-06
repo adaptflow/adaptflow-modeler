@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
-import { TabViewModule } from 'primeng/tabview';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { TabView, TabViewModule } from 'primeng/tabview';
 import { ElementPropertiesComponent } from './element-properties/element-properties.component';
 import { GeneralPropertiesComponent } from './general-properties/general-properties.component';
 import { dia } from '@joint/core';
@@ -12,11 +12,13 @@ import { dia } from '@joint/core';
   templateUrl: './modeler-properties.component.html',
   styleUrl: './modeler-properties.component.scss'
 })
-export class ModelerPropertiesComponent implements OnInit {
+export class ModelerPropertiesComponent implements AfterViewInit {
   @Input()
   graph: dia.Graph;
-  ngOnInit(): void {
-
+  // @ViewChild(TabView) tabView: TabView;
+  ngAfterViewInit(): void {
+    // if (this.tabView) {
+    //   this.tabView.activeIndex = 1;
+    // }
   }
 }
-

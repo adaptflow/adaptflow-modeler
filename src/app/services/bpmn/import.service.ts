@@ -9,7 +9,8 @@ import { ProcessManagerService } from './process-manager.service';
 export class ImportService {
   constructor(private processManagerService: ProcessManagerService) { }
 
-  async import(graph, paper, xml: string, fields): Promise<any> {
+  async import(graph, paper, xml: string, fields, generalProperties): Promise<any> {
+    this.processManagerService.addGeneralProperties(generalProperties, null);
     const moddle = new BpmnModdle();
     const result = await moddle.fromXML(xml);
 
