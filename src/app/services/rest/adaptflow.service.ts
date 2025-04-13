@@ -78,6 +78,16 @@ export class AdaptflowService {
     );
   }
 
+  updateProcessDefinition(processId: string, payload) {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.put<any>(this.apiBaseUrl + AF_URLS.getProcessDefinitionByIdUrl(processId), payload, { headers, ...this.httpOptions })
+    .pipe(
+      catchError((error) => {
+        return this.handleErrorResponse(error.error);
+      })
+    );
+  }
+
   handleErrorResponse(error) {
     return throwError(error.errorCode + " | " + error.errorMessage);
   }

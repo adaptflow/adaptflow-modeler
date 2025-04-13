@@ -33,6 +33,8 @@ export class TopToolbarComponent implements OnInit, OnChanges, AfterViewInit, On
   graph: dia.Graph;
   @Input()
   paper: dia.Paper;
+  @Input()
+  processId!: string;
 
   private dragStartPosition: { x: number; y: number } | null = null;
   private isPanning: boolean = false;
@@ -101,20 +103,37 @@ export class TopToolbarComponent implements OnInit, OnChanges, AfterViewInit, On
           fields: elementSelection.elements,
           generalProperties: elementSelection.generalProperties
         }
-        this.adaptflowService.saveProcessDefinition(processDefinition).subscribe({
-          next: (response) => {
-            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Process definition saved successfully' });
-            this.graph.clear();
-            this.facadeService.onInitialState();
-            this._router.navigateByUrl('/modeler/' + response['processId']).then(() => {
+        if(this.processId == null) {
+          this.adaptflowService.saveProcessDefinition(processDefinition).subscribe({
+            next: (response) => {
+              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Process definition saved successfully' });
+              this.graph.clear();
+              this.facadeService.onInitialState();
+              this._router.navigateByUrl('/modeler/' + response['processId']).then(() => {
+                window.location.reload();
+              });
               window.location.reload();
-            });
-            window.location.reload();
-          },
-          error: (error) => {
-            this.messageService.add({ severity: 'error', summary: 'Error saving process definition', detail: error });
-          }
-        });
+            },
+            error: (error) => {
+              this.messageService.add({ severity: 'error', summary: 'Error saving process definition', detail: error });
+            }
+          });
+        } else {
+          this.adaptflowService.updateProcessDefinition(this.processId, processDefinition).subscribe({
+            next: (response) => {
+              this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Process definition saved successfully' });
+              this.graph.clear();
+              this.facadeService.onInitialState();
+              this._router.navigateByUrl('/modeler/' + response['processId']).then(() => {
+                window.location.reload();
+              });
+              window.location.reload();
+            },
+            error: (error) => {
+              this.messageService.add({ severity: 'error', summary: 'Error saving process definition', detail: error });
+            }
+          });
+        }
       });
     });
   }
