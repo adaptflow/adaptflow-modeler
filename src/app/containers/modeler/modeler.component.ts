@@ -50,19 +50,23 @@ export class ModelerComponent implements OnInit {
       model: this.graph,
       width: "100%",
       height: "100%",
-      gridSize: 1,
-      drawGrid: true,
+      gridSize: 20,
+      drawGrid: {
+        name: 'dot',
+        args: [
+            { color: 'black', thickness: 2 }, // settings for the primary mesh
+      ]},
+      background: { color: '#F5F5F5' },
       cellViewNamespace: shapes,
       defaultLink: () => new shapes.standard.Link(),
-      linkPinning: false,
-      defaultConnector: {
-        name: "curve"
-      }
+      defaultRouter: { name: 'manhattan' },
+      linkPinning: false
     });
     this.addEventListeners();
     if(this.processId==null) {
       this.processManagerService.addStartAndEndElement(this.graph, this.paper, this.startElement, this.endElement);
       window.addEventListener('resize', () => this.processManagerService.updateElementPositions(this.startElement, this.endElement));
+      this.processManagerService.addDefaultGeneralProperties();
     } else {
       this.loadProcess();
     }
@@ -71,7 +75,7 @@ export class ModelerComponent implements OnInit {
 
   loadProcess() {
     this.adaptflowService.getProcessDefinition(this.processId).subscribe(processDefinition => {
-      this.importService.import(this.graph, this.paper, processDefinition.bpmnXml, processDefinition.fields, processDefinition.generalProperties).then(() => {
+      this.importService.import(this.graph, this.paper, processDefinition.bpmnXml, JSON.parse(processDefinition.fields), JSON.parse(processDefinition.generalProperties)).then(() => {
         console.log("Import successful!");
       });
     });

@@ -4,7 +4,7 @@ import * as Constants from '../../constants/elements.constant';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { AF_URLS } from './url.constant';
-import { Observable, of } from 'rxjs';
+import { catchError, map, Observable, of, throwError } from 'rxjs';
 import { UserDetails } from '../../interface/user-details.interface';
 
 @Injectable({
@@ -56,7 +56,29 @@ export class AdaptflowService {
   }
 
   getProcessDefinition(processId: string): Observable<any> {
-    // return this.http.get<any>(this.apiBaseUrl + AF_URLS.getProcessDefinitionUrl(processId), this.httpOptions);
-    return of(PROCESS_DEFINITION);
+    return this.http.get<any>(this.apiBaseUrl + AF_URLS.getProcessDefinitionByIdUrl(processId), this.httpOptions);
+    // return of(PROCESS_DEFINITION);
+  }
+
+  getAllProcessDefinitions(): Observable<any> {
+    return this.http.get<any>(this.apiBaseUrl + AF_URLS.getAllProcessDefinitionsUrl(), this.httpOptions);
+  }
+
+  deleteProcessDefinition(processId: string): Observable<any> {
+    return this.http.delete<any>(this.apiBaseUrl + AF_URLS.getProcessDefinitionByIdUrl(processId), this.httpOptions);
+  }
+
+  saveProcessDefinition(payload) {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.post<any>(this.apiBaseUrl + AF_URLS.getProcessDefinitionSaveUrl(), payload, { headers, ...this.httpOptions })
+    .pipe(
+      catchError((error) => {
+        return this.handleErrorResponse(error.error);
+      })
+    );
+  }
+
+  handleErrorResponse(error) {
+    return throwError(error.errorCode + " | " + error.errorMessage);
   }
 }

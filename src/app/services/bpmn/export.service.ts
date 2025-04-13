@@ -9,21 +9,19 @@ export class ExportService {
 
   constructor() { }
 
-  convertToBpmnXML(jointjsDiagramJSON) {
-    const process = this.mapJointJSToBPMN(jointjsDiagramJSON);
+  async convertToBpmnXML(jointjsDiagramJSON, processId: string, processName: string) {
+    const process = this.mapJointJSToBPMN(jointjsDiagramJSON, processId, processName);
     let moddle = new BpmnModdle();
 
-    const xmlObject = this.convertToXml(moddle, process).then(res => {
-      console.log("xml:\n", res);
-      return res;
-    });
+    const xmlObject = await this.convertToXml(moddle, process);
+    return xmlObject.xml;
   }
 
   private async convertToXml(moddle, definitions) {
     return await moddle.toXML(definitions, { format: true });
   }
 
-  private mapJointJSToBPMN(jointjsDiagramJSON) {
+  private mapJointJSToBPMN(jointjsDiagramJSON, processId: string, processName: string) {
     let adaptFlowNs = 'http://adaptflow.org/schema/1.0/bpmn';
     let activitiNs = 'http://activiti.org/bpmn'; 
     const bpmnElements = [];
@@ -31,7 +29,7 @@ export class ExportService {
     const elementMap = {};
     const moddle = new BpmnModdle();
 
-    const process = moddle.create('bpmn:Process', { id: 'Process_1', name: "My Process" });
+    const process = moddle.create('bpmn:Process', { id: processId, name: processName });
     const bpmnDiagram = moddle.create('bpmndi:BPMNDiagram', {
       id: 'BPMNDiagram_1',
       plane: moddle.create('bpmndi:BPMNPlane', {

@@ -38,9 +38,6 @@ export class ElementPropertiesComponent implements OnInit {
     this.elementPropertiesForm.valueChanges
     .pipe(debounceTime(500))
     .subscribe(values=> {
-      if (this.elementPropertiesForm.invalid) {
-        return; // Don't update if the form is invalid
-      }
       let updatedValues = _.cloneDeep(this.selectedElement);
       updatedValues.fields = updatedValues.fields.map(field => ({
         ...field,
@@ -63,17 +60,15 @@ export class ElementPropertiesComponent implements OnInit {
       if(this.selectedElement) {
         this.elementPropertiesForm = this.fb.group({});
         this.selectedElement.fields.forEach((field) => {
-          let validators = [];
-          validators.push(Validators.required);
           if (field.type=='selection') {
             this.elementPropertiesForm.addControl(
               field.fieldId,
-              this.fb.control(field.value || '', validators)
+              this.fb.control(field.value || '')
             );
           } else if (field.type=='input') {
             this.elementPropertiesForm.addControl(
               field.fieldId,
-              this.fb.control(field.value || '', validators)
+              this.fb.control(field.value || '')
             );
             const element = this.graph.getCell(this.selectedElementId) as dia.Element;
             const text = field.value || '';

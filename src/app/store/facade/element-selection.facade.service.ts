@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { filter, map, Observable, tap } from "rxjs";
-import { elementDeselected, elementDropped, elementImport, elementRemoved, elementSelected, updateElementAttributes, updateGeneralProperties } from "../actions/element-selection.action";
+import { elementDeselected, elementDropped, elementImport, elementRemoved, elementSelected, initialStateAction, updateElementAttributes, updateGeneralProperties } from "../actions/element-selection.action";
 import { ElementInstanceService } from "../../services/elements/element-instance.service";
 
 @Injectable({
@@ -19,6 +19,10 @@ export class ElementSelectionFacadeService {
         this.generalProperties$ = this.store.select('elementSelection').pipe(
             filter(state => !!state && !!state.generalProperties && state.updateByForm==null),
             map(state=> state.generalProperties));
+    }
+
+    onInitialState() {
+        this.store.dispatch(initialStateAction());
     }
 
     onDropped(elementId, elementType) {

@@ -24,6 +24,10 @@ export class ProcessManagerService {
     this.generalPropertiesService.addGeneralProperties(generalProperties, formName);
   }
 
+  public addDefaultGeneralProperties() {
+    this.generalPropertiesService.addDefaultGeneralProperties();
+  }
+
   public getAndAddElementToCanvas(graph, paper, element, fields) {
     this.elementService.addAdaptElementInGraph(graph, paper, element, fields);
   }
@@ -46,13 +50,15 @@ export class ProcessManagerService {
   }
 
   public updateElementPositions(startElement, endElement) {
-    // Get the container dimensions
-    const container = document.getElementById('canvasContainer');
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
+    if(startElement && startElement) {
+      // Get the container dimensions
+      const container = document.getElementById('canvasContainer');
+      const containerWidth = container.clientWidth;
+      const containerHeight = container.clientHeight;
 
-    startElement.position(20, containerHeight / 2 - 25);
-    endElement.position(containerWidth - 70, containerHeight / 2 - 25);
+      startElement.position(20, containerHeight / 2 - 25);
+      endElement.position(containerWidth - 70, containerHeight / 2 - 25);
+    }
   }
 
   public updateElementProperty(graph, elementId: string, propertyName: string, propertyValue: string) {

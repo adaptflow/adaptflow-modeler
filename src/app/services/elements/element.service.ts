@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { dia, elementTools, shapes, util } from '@joint/core';
-import * as Constants from '../../constants/elements.constant';
-import { ElementInstanceService } from './element-instance.service';
 import { ElementSelectionFacadeService } from '../../store/facade/element-selection.facade.service';
 
 @Injectable({
@@ -9,7 +7,6 @@ import { ElementSelectionFacadeService } from '../../store/facade/element-select
 })
 export class ElementService {
     constructor(
-        private elementInstanceService: ElementInstanceService,
         private facadeService: ElementSelectionFacadeService
     ) { }
 
@@ -75,6 +72,7 @@ export class ElementService {
             adaptLink.source(element['source']);
             adaptLink.target(element['target']);
             adaptLink.addTo(graph);
+            adaptLink.router('manhattan');
             return;
         }
     }

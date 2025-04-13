@@ -45,7 +45,7 @@ export class ImportService {
 
       elementAttributes['position'] = position;
       elementAttributes['size'] = size;
-      let fieldByElementId = fields['af-' + element.id]
+      let fieldByElementId = fields[element.id]
       if(fieldByElementId) {
         this.processManagerService.getAndAddElementToCanvas(graph, paper, elementAttributes, fieldByElementId);
       } else {

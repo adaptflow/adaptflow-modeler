@@ -16,11 +16,15 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ElementSelectionFacadeService } from '../../store/facade/element-selection.facade.service';
 import { take } from 'rxjs';
 import { ExportService } from '../../services/bpmn/export.service';
+import { AdaptflowService } from '../../services/rest/adaptflow.service';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'top-toolbar',
   standalone: true,
-  imports: [ToolbarModule, ButtonModule, TooltipModule],
+  imports: [ToolbarModule, ButtonModule, TooltipModule, ToastModule],
+  providers: [MessageService],
   templateUrl: './top-toolbar.component.html',
   styleUrl: './top-toolbar.component.scss',
 })
@@ -40,7 +44,9 @@ export class TopToolbarComponent implements OnInit, OnChanges, AfterViewInit, On
     private _router: Router,
     private facadeService: ElementSelectionFacadeService,
     private cdr: ChangeDetectorRef,
-    private exportService: ExportService
+    private exportService: ExportService,
+    private adaptflowService: AdaptflowService,
+    private messageService: MessageService
   ) {
     this.handleMouseMove = this.onMouseMove.bind(this);
   }
@@ -82,15 +88,35 @@ export class TopToolbarComponent implements OnInit, OnChanges, AfterViewInit, On
     }
   }
 
-  save() {
+  async save() {
     console.log('Save clicked');
     let graphJson = this.graph.toJSON();
     this.facadeService.selectedElement$.pipe(take(1)).subscribe((elementSelection) => {
-      console.log('graphJson:\n', graphJson);
-      console.log('elementSelections:\n', elementSelection);
-      console.log('BPMN modeL: \n', this.exportService.convertToBpmnXML(graphJson));
+      const processName = elementSelection.generalProperties.find(property=>property.name=="Process Name").value;
+      const processId = elementSelection.generalProperties.find(property=>property.name=="Process Name").id;
+      const bpmnXml = this.exportService.convertToBpmnXML(graphJson, processId, processName);
+      bpmnXml.then((xml) => {
+        const processDefinition = {
+          bpmnXml: xml,
+          fields: elementSelection.elements,
+          generalProperties: elementSelection.generalProperties
+        }
+        this.adaptflowService.saveProcessDefinition(processDefinition).subscribe({
+          next: (response) => {
+            this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Process definition saved successfully' });
+            this.graph.clear();
+            this.facadeService.onInitialState();
+            this._router.navigateByUrl('/modeler/' + response['processId']).then(() => {
+              window.location.reload();
+            });
+            window.location.reload();
+          },
+          error: (error) => {
+            this.messageService.add({ severity: 'error', summary: 'Error saving process definition', detail: error });
+          }
+        });
+      });
     });
-    // Implement save logic
   }
 
   run() {
