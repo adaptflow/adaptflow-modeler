@@ -1,15 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { dia, linkTools, shapes } from '@joint/core';
 import { ElementsPaletteComponent } from '../../components/modeler/elements-palette/elements-palette.component';
 import { ModelerCanvasComponent } from '../../components/modeler/modeler-canvas/modeler-canvas.component';
 import { ModelerPropertiesComponent } from '../../components/modeler/modeler-properties/modeler-properties.component';
 import { ElementSelectionFacadeService } from '../../store/facade/element-selection.facade.service';
 import * as _ from 'lodash';
-import { ElementService } from '../../services/elements/element.service';
 import { TopToolbarComponent } from "../../components/top-toolbar/top-toolbar.component";
 import { NavbarComponent } from "../../components/navbar/navbar.component";
 import { ActivatedRoute } from '@angular/router';
+import { AdaptflowService } from '../../services/rest/adaptflow.service';
+import { ImportService } from '../../services/bpmn/import.service';
+import { ProcessManagerService } from '../../services/bpmn/process-manager.service';
+import { forkJoin } from 'rxjs';
+import { TabView } from 'primeng/tabview';
 
 @Component({
   selector: 'app-modeler',
@@ -18,80 +22,74 @@ import { ActivatedRoute } from '@angular/router';
   templateUrl: './modeler.component.html',
   styleUrl: './modeler.component.scss'
 })
-export class ModelerComponent implements AfterViewInit {
+export class ModelerComponent implements OnInit {
   graph: dia.Graph;
   paper: dia.Paper;
   hideElementTools: Boolean = true;
   startElement;
   endElement;
-  projectId!: string;
+  processId!: string;
+  @ViewChild(ModelerPropertiesComponent) modelerPropertiesComponent: ModelerPropertiesComponent;
 
   constructor(
     private facadeService: ElementSelectionFacadeService,
-    private elementService: ElementService,
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute,
+    private adaptflowService: AdaptflowService,
+    private processManagerService: ProcessManagerService,
+    private importService: ImportService) {
       this.route.params.subscribe(params => {
-        this.projectId = params['projectId'];
+        this.processId = params['processId'];
       });
 
   }
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     this.graph = new dia.Graph({}, { cellNamespace: shapes });
     this.paper = new dia.Paper({
       el: document.getElementById('canvasContainer'),
       model: this.graph,
       width: "100%",
       height: "100%",
-      gridSize: 1,
-      drawGrid: true,
+      gridSize: 20,
+      drawGrid: {
+        name: 'dot',
+        args: [
+            { color: 'black', thickness: 2 }, // settings for the primary mesh
+      ]},
+      background: { color: '#F5F5F5' },
       cellViewNamespace: shapes,
       defaultLink: () => new shapes.standard.Link(),
-      linkPinning: false,
-      defaultConnector: {
-        name: "curve"
-      }
+      defaultRouter: { name: 'manhattan' },
+      linkPinning: false
     });
     this.addEventListeners();
-    this.addStartAndEndElement();
-    window.addEventListener('resize', () => this.updateElementPositions());
+    if(this.processId==null) {
+      this.processManagerService.addStartAndEndElement(this.graph, this.paper, this.startElement, this.endElement);
+      window.addEventListener('resize', () => this.processManagerService.updateElementPositions(this.startElement, this.endElement));
+      this.processManagerService.addDefaultGeneralProperties();
+    } else {
+      this.loadProcess();
+    }
     this.paper.hideTools();
   }
 
-  addStartAndEndElement() {
-    this.startElement = new shapes.standard.Circle();
-    this.startElement.resize(50, 50);
-    this.startElement.attr('label/text', 'Start');
-    this.startElement.prop({'type': 'standard.Start'});
-    this.graph.addCell(this.startElement);
-    this.elementService.addTools(this.paper, this.startElement);
-
-    this.endElement = new shapes.standard.Circle();
-    this.endElement.resize(50, 50);
-    this.endElement.attr('label/text', 'End');
-    this.endElement.prop({'type': 'standard.End'});
-    this.graph.addCell(this.endElement);
-    this.elementService.addTools(this.paper, this.endElement);
-    this.updateElementPositions();
-
+  loadProcess() {
+    this.adaptflowService.getProcessDefinition(this.processId).subscribe(processDefinition => {
+      this.importService.import(this.graph, this.paper, processDefinition.bpmnXml, JSON.parse(processDefinition.fields), JSON.parse(processDefinition.generalProperties)).then(() => {
+        console.log("Import successful!");
+      });
+    });
   }
-
-  updateElementPositions() {
-    // Get the container dimensions
-    const container = document.getElementById('canvasContainer');
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
-
-    this.startElement.position(20, containerHeight / 2 - 25);
-    this.endElement.position(containerWidth - 70, containerHeight / 2 - 25);
-  }
-
 
   addEventListeners() {
     this.paper.on('element:pointerclick', (elementView) => {
       this.paper.hideTools();
       elementView.showTools();
       this.facadeService.onSelected(elementView.model.id.toString());
+      // Select the second tab (index 1) in ModelerPropertiesComponent
+      // if (this.modelerPropertiesComponent && this.modelerPropertiesComponent.tabView) {
+      //   this.modelerPropertiesComponent.tabView.activeIndex = 1;
+      // }
     });
 
     //Hide all tools on blank canvas click

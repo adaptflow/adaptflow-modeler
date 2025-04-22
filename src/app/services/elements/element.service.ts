@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
-
 import { dia, elementTools, shapes, util } from '@joint/core';
+import { ElementSelectionFacadeService } from '../../store/facade/element-selection.facade.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ElementService {
-    constructor() { }
+    constructor(
+        private facadeService: ElementSelectionFacadeService
+    ) { }
 
     public getElement(element, position) {
         let newElement;
@@ -32,6 +34,47 @@ export class ElementService {
         }
         newElement.position(position.x, position.y);
         return newElement;
+    }
+
+    public addAdaptElementInGraph(graph, paper, element, fields) {
+        if(element['type'] == 'bpmn:StartEvent') {
+            let adaptElement = new Start({id: element['id']});
+            adaptElement.resize(50, 50);
+            adaptElement.attr('label/text', element['name']);
+            adaptElement.prop({'type': 'adaptflow.Start'});
+            adaptElement.position(element['position'].x, element['position'].y);
+            graph.addCell(adaptElement);
+            this.addTools(paper, adaptElement);
+            return;
+        }
+        if(element['type'] == 'bpmn:EndEvent') {
+            let adaptElement = new End({id: element['id']});
+            adaptElement.resize(50, 50);
+            adaptElement.attr('label/text', element['name']);
+            adaptElement.prop({'type': 'adaptflow.End'});
+            adaptElement.position(element['position'].x, element['position'].y);
+            graph.addCell(adaptElement);
+            this.addTools(paper, adaptElement);
+            return;
+        }
+        if(element['type'] == 'bpmn:ServiceTask') {
+            let adaptElement = new Node({id: element['id']});
+            adaptElement.attr('label/text', element['name']);
+            adaptElement.prop({'type': element['taskType']});
+            adaptElement.position(element['position'].x, element['position'].y);
+            graph.addCell(adaptElement);
+            this.addTools(paper, adaptElement);
+            this.facadeService.onElementImport(element['id'], fields);
+            return;
+        }
+        if(element['type'] == 'bpmn:SequenceFlow') {
+            let adaptLink = new shapes.standard.Link({id: element['id']});
+            adaptLink.source(element['source']);
+            adaptLink.target(element['target']);
+            adaptLink.addTo(graph);
+            adaptLink.router('manhattan');
+            return;
+        }
     }
 
     public addTools(paper, element) {
@@ -107,5 +150,32 @@ export class Node extends ForeignObjectElement {
               </div>
             </foreignObject>
         `;
+    }
+}
+
+export class Start extends shapes.standard.Circle {
+    override defaults() {
+        return {
+            ...super.defaults,
+            type: 'adaptflow.Start'
+        };
+    }
+}
+
+export class End extends shapes.standard.Circle {
+    override defaults() {
+        return {
+            ...super.defaults,
+            type: 'adaptflow.End'
+        };
+    }
+}
+
+export class LLMProvider extends shapes.standard.Rectangle {
+    override defaults() {
+        return {
+            ...super.defaults,
+            type: 'adaptflow.LLMProvider'
+        };
     }
 }

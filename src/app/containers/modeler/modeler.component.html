@@ -1,13 +1,13 @@
 <navbar></navbar>
-<top-toolbar [graph]="graph"></top-toolbar>
+<top-toolbar *ngIf="graph && paper" [graph]="graph" [paper]="paper" [processId]="processId"></top-toolbar>
 <div class="grid">
     <div class="col-2">
-        <elements-palette [paper]="paper" [graph]="graph"></elements-palette>
+        <elements-palette *ngIf="graph && paper" [paper]="paper" [graph]="graph"></elements-palette>
     </div>
     <div class="col-8" style="height: 800px;">
         <modeler-canvas></modeler-canvas>
     </div>
     <div class="col-2">
-        <modeler-properties></modeler-properties>
+        <modeler-properties *ngIf="graph" [graph]="graph"></modeler-properties>
     </div>
 </div>

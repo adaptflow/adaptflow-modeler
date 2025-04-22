@@ -7,9 +7,9 @@ import { AccordionModule } from 'primeng/accordion';
 import { InputTextModule } from 'primeng/inputtext';
 import { ElementType } from '../../../interface/palette.interface';
 import { ElementListService } from '../../../services/elements/element-list.service';
-import { ElementService } from '../../../services/elements/element.service';
 import { ElementSelectionFacadeService } from '../../../store/facade/element-selection.facade.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ProcessManagerService } from '../../../services/bpmn/process-manager.service';
 
 @Component({
   selector: 'elements-palette',
@@ -30,7 +30,7 @@ export class ElementsPaletteComponent implements OnInit {
 
   constructor(
     private elementList: ElementListService,
-    private elementService: ElementService,
+    private processManagerService: ProcessManagerService,
     private facadeService: ElementSelectionFacadeService,
     private cdr: ChangeDetectorRef,
     private sanitizer: DomSanitizer
@@ -47,20 +47,11 @@ export class ElementsPaletteComponent implements OnInit {
     const dropPosition = this.getMousePositionOnCanvas(event.event);
     // Add shape to canvas based on the dropped element
     let droppedElement = event.container.data[event.currentIndex];
-    let elementId = this.addElementToCanvas(droppedElement, dropPosition);
+    let elementId = this.processManagerService.addElementToCanvas(this.graph, this.paper, droppedElement, dropPosition);
     this.facadeService.onDeselection();
     this.facadeService.onDropped(elementId, droppedElement.type);
     this.paper.hideTools();
     this.cdr.detectChanges();
-  }
-
-  private addElementToCanvas(element, position: { x: number, y: number }) {
-    const target = this.paper.el.getBoundingClientRect();
-    let newElement = this.elementService.getElement(element, position);
-    // Add the element to the graph
-    this.graph.addCell(newElement);
-    this.elementService.addTools(this.paper, newElement);
-    return newElement.id;
   }
 
   // Get mouse position relative to canvas

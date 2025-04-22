@@ -1,6 +1,21 @@
-<div class="tile-container" pRipple (click)="openModeler(project.id)">
-  <p-panel pRipple header="{{ project.name }}">
-      <p class="description">{{ project.description }}</p>
-      <p class="last-modified">Last modified: {{ project.lastModified | date }}</p>
+<div class="tile-container" (click)="openModeler(project.id)">
+  <p-panel>
+    <ng-template pTemplate="header">
+      <div class="p-panel-title">{{ project.name }}</div>
+    </ng-template>
+
+    <!-- Add the delete button to the icons template -->
+    <ng-template pTemplate="icons">
+      <button pRipple class="p-panel-header-icon p-link mr-2"
+              (click)="deleteProject(project.id); $event.stopPropagation()"
+              pTooltip="Delete Project" tooltipPosition="top">
+              <span class="pi pi-trash" style="color: #ec4629"></span>
+      </button>
+    </ng-template>
+
+    <!-- Existing content -->
+    <p class="description">{{ project.description }}</p>
+    <p class="last-modified">Last modified: {{formatProjectDate(project.modifiedAt)}}</p>
   </p-panel>
 </div>
+<p-toast />

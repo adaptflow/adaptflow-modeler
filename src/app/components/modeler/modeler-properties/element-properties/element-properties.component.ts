@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import * as _ from 'lodash';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { ElementSelectionFacadeService } from '../../../../store/facade/element-selection.facade.service';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { dia } from '@joint/core';
 
 @Component({
   selector: 'element-properties',
@@ -15,6 +16,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
   styleUrl: './element-properties.component.scss'
 })
 export class ElementPropertiesComponent implements OnInit {
+  @Input()
+  graph: dia.Graph;
   elementPropertiesForm: FormGroup;
   showElementPropertiesForm: boolean = false;
   selectedElement;
@@ -67,6 +70,10 @@ export class ElementPropertiesComponent implements OnInit {
               field.fieldId,
               this.fb.control(field.value || '')
             );
+            const element = this.graph.getCell(this.selectedElementId) as dia.Element;
+            const text = field.value || '';
+            element.attr('label/text', text);
+            this.resizeElementBasedOnText(element, text);
           }
         });
         this.showElementPropertiesForm = true;
@@ -77,5 +84,33 @@ export class ElementPropertiesComponent implements OnInit {
       }
       this.cdr.detectChanges()
     });
+  }
+
+  resizeElementBasedOnText(element: dia.Element, text: string) {
+    if (!element) return;
+
+    const padding = 20;
+    const fontSize = element.attr('label/font-size') || 14;
+    const fontFamily = element.attr('label/font-family') || 'Arial';
+
+    // Create a temporary SVG text element to measure the text width
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    textElement.setAttribute('font-size', fontSize.toString());
+    textElement.setAttribute('font-family', fontFamily);
+    textElement.textContent = text;
+    svg.appendChild(textElement);
+    document.body.appendChild(svg);
+
+    // Get the bounding box of the text
+    const bbox = textElement.getBBox();
+    document.body.removeChild(svg);
+
+    // Calculate the new width and height
+    const newWidth = bbox.width + padding * 2;
+    const newHeight = bbox.height + padding * 2;
+
+    // Update the element's size
+    element.resize(newWidth, newHeight);
   }
 }

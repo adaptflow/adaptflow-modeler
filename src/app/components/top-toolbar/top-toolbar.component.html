@@ -1,18 +1,27 @@
 <p-toolbar>
-    <ng-template pTemplate="start">
-    </ng-template>
-  
-    <ng-template pTemplate="center">
-      <div class="flex align-items-center justify-content-center">
-        <p-button icon="pi pi-search" (click)="zoomIn()" styleClass="p-button-rounded p-button-text" aria-label="Zoom In"></p-button>
-        <p-button icon="pi pi-search-minus" (click)="zoomOut()" styleClass="p-button-rounded p-button-text ml-2" aria-label="Zoom Out"></p-button>
-      </div>
-    </ng-template>
-  
-    <ng-template pTemplate="end">
-        <p-button icon="pi pi-check" pTooltip="Save" tooltipPosition="bottom" (click)="save()" size="small" class="ml-2" [raised]="true"></p-button>
-        <p-button icon="pi pi-play" pTooltip="Run" tooltipPosition="bottom" (click)="run()" size="small" class="ml-2" [raised]="true"></p-button>
-        <p-button icon="pi pi-file-export" pTooltip="Export" tooltipPosition="bottom" (click)="export()" size="small" class="ml-2" [raised]="true"></p-button>
-        <p-button icon="pi pi-times" pTooltip="Cancel" (click)="cancel()" size="small" class="ml-2" [raised]="true"></p-button>
-    </ng-template>
-  </p-toolbar>
+  <ng-template pTemplate="start">
+  </ng-template>
+
+  <ng-template pTemplate="center">
+    <div class="flex align-items-center justify-content-center">
+      <p-button icon="pi pi-search-plus" (click)="zoomIn()" styleClass="p-button-rounded p-button-text"
+        aria-label="Zoom In"></p-button>
+      <p-button icon="pi pi-search-minus" (click)="zoomOut()" styleClass="p-button-rounded p-button-text ml-2"
+        aria-label="Zoom Out"></p-button>
+      <p-button icon="pi pi-refresh" (click)="resetPaperPosition()" styleClass="p-button-rounded p-button-text ml-2"
+        aria-label="Reset Position"></p-button>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="end">
+    <p-button icon="pi pi-check" pTooltip="Save" tooltipPosition="bottom" (click)="save()" size="small" class="ml-2"
+      [raised]="true"></p-button>
+    <p-button icon="pi pi-play" pTooltip="Run" tooltipPosition="bottom" (click)="run()" size="small" class="ml-2"
+      [raised]="true"></p-button>
+    <p-button icon="pi pi-file-export" pTooltip="Export" tooltipPosition="bottom" (click)="export()" size="small"
+      class="ml-2" [raised]="true"></p-button>
+    <p-button icon="pi pi-times" pTooltip="Cancel" (click)="cancel()" size="small" class="ml-2"
+      [raised]="true"></p-button>
+  </ng-template>
+</p-toolbar>
+<p-toast [style]="{ 'margin-top': '40px' }"/>

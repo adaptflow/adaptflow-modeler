@@ -6,6 +6,11 @@ export const elementDropped = createAction(
     props<{elementId: string; attributes: any}>()
 );
 
+export const elementImport = createAction(
+    '[Canvas] Element Imported',
+    props<{elementId: string; attributes: any}>()
+);
+
 export const elementSelected = createAction(
     '[Canvas] Element Selected',
     props<{elementId: string}>()
@@ -21,4 +26,11 @@ export const elementDeselected = createAction(
 export const elementRemoved = createAction(
     '[Canvas] Element Deselected',
     props<{elementId: string}>()
+);
+export const updateGeneralProperties = createAction(
+    '[Element Properties] Update General Properties',
+    props<{ generalProperties: any, updateByForm: string }>()
+);
+export const initialStateAction = createAction(
+    '[Canvas] Initial state'
 );

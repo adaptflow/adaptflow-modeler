@@ -1,1 +1,30 @@
-<p>general-properties works!</p>
+<!-- general-properties.component.html -->
+<form [formGroup]="generalPropertiesForm" *ngIf="generalPropertiesForm">
+  <div *ngFor="let property of generalProperties">
+    <div *ngIf="property.type === 'text'">
+      <label [for]="property.id">{{ property.name }}</label>
+      <input
+        type="text"
+        pInputText
+        [id]="property.id"
+        [formControl]="getControl(property.id)"
+      />
+      <div
+        *ngIf="getControl(property.id)?.invalid && (getControl(property.id)?.dirty || getControl(property.id)?.touched)"
+      >
+        <div *ngIf="getControl(property.id)?.errors?.['required']">
+          {{ property.name }} is required.
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="property.type === 'select'">
+      <label [for]="property.id">{{ property.name }}</label>
+      <p-dropdown
+        [id]="property.id"
+        [options]="property.options"
+        [formControl]="getControl(property.id)"
+      ></p-dropdown>
+    </div>
+  </div>
+</form>
